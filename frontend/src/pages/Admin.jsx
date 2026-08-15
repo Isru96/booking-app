@@ -6,7 +6,9 @@ const Admin = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch("http://localhost:5055/appointments");
+        const response = await fetch(
+          "https://booking-app-backend-4wv6.onrender.com/appointments",
+        );
         const data = await response.json();
         setAppointments(data);
         console.log(data);
@@ -38,11 +40,14 @@ const Admin = () => {
 
   const markComplete = async (id) => {
     try {
-      await fetch(`http://localhost:5055/appointments/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "completed" }),
-      });
+      await fetch(
+        `https://booking-app-backend-4wv6.onrender.com/appointments/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "completed" }),
+        },
+      );
       fetchAppointments(); // refresh the list so the change shows
     } catch (error) {
       console.error(error);
@@ -51,9 +56,12 @@ const Admin = () => {
 
   const cancelAppointment = async (id) => {
     try {
-      await fetch(`http://localhost:5055/appointments/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `https://booking-app-backend-4wv6.onrender.com/appointments/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
       fetchAppointments(); // refresh the list
     } catch (error) {
       console.error(error);
