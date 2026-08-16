@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Admin = () => {
   const [appointments, setAppointments] = useState([]);
@@ -7,7 +8,7 @@ const Admin = () => {
     const fetchAppointments = async () => {
       try {
         const response = await fetch(
-          "https://booking-app-backend-4wv6.onrender.com/appointments",
+          `${API_URL}/appointments`,
         );
         const data = await response.json();
         setAppointments(data);
@@ -41,7 +42,7 @@ const Admin = () => {
   const markComplete = async (id) => {
     try {
       await fetch(
-        `https://booking-app-backend-4wv6.onrender.com/appointments/${id}`,
+        `${API_URL}/appointments/${id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -57,7 +58,7 @@ const Admin = () => {
   const cancelAppointment = async (id) => {
     try {
       await fetch(
-        `https://booking-app-backend-4wv6.onrender.com/appointments/${id}`,
+        `${API_URL}/appointments/${id}`,
         {
           method: "DELETE",
         },

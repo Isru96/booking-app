@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Booking = () => {
   const [customer_name, setCustomerName] = useState("");
@@ -10,7 +11,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5055/services");
+        const response = await fetch(`${API_URL}/services`);
         const data = await response.json();
 
         console.log(data);
@@ -28,7 +29,7 @@ const Booking = () => {
     e.preventDefault(); // stop the page from reloading
 
     try {
-      const response = await fetch("http://localhost:5055/appointments", {
+      const response = await fetch(`${API_URL}/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
