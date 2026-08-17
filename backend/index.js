@@ -4,6 +4,8 @@ require("dotenv").config();
 
 const servicesRoutes = require("./routes/services.routes");
 const appointmentsRoutes = require("./routes/appointments.routes"); // 1. ይህ ተጨምሯል
+const authRoutes = require("./routes/auth.routes");
+const appointmentRoutes = require("./routes/appointments.routes");
 
 const app = express();
 
@@ -15,7 +17,8 @@ app.get("/", (req, res) => {
 });
 
 app.use(servicesRoutes);
-app.use(appointmentsRoutes);
+app.use("/appointments", appointmentRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
