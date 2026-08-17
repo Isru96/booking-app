@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-const API_URL = import.meta.env.VITE_API_URL;
+import { api } from "../lib/api";
+import Spinner from "../components/Spinner";
 
 const Booking = () => {
   const [customer_name, setCustomerName] = useState("");
@@ -7,41 +8,34 @@ const Booking = () => {
   const [service_id, setServiceId] = useState("");
   const [appointment_time, setAppointmentTime] = useState("");
   const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/services");
+      setServices(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/services`);
-        const data = await response.json();
-
-        console.log(data);
-
-        setServices(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchData();
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // stop the page from reloading
-
+    e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/appointments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer_name,
-          customer_email,
-          service_id: Number(service_id),
-          appointment_time,
-        }),
+      const response = await api.post("/appointments", {
+        customer_name,
+        customer_email,
+        service_id: Number(service_id),
+        appointment_time,
       });
-
-      const data = await response.json();
-      console.log("Booked:", data);
+      console.log("Booked:", response);
     } catch (error) {
       console.error(error);
     }
@@ -54,47 +48,51 @@ const Booking = () => {
           Book an Appointment
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <select
-            value={service_id}
-            onChange={(e) => setServiceId(e.target.value)}
-            className="select select-bordered w-full"
-          >
-            <option value="">-- Choose a service --</option>
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </select>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <select
+              value={service_id}
+              onChange={(e) => setServiceId(e.target.value)}
+              className="select select-bordered w-full"
+            >
+              <option value="">-- Choose a service --</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
 
-          <input
-            type="text"
-            placeholder="Your name"
-            value={customer_name}
-            onChange={(e) => setCustomerName(e.target.value)}
-            className="input input-bordered w-full"
-          />
+            <input
+              type="text"
+              placeholder="Your name"
+              value={customer_name}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="input input-bordered w-full"
+            />
 
-          <input
-            type="email"
-            placeholder="Your email"
-            value={customer_email}
-            onChange={(e) => setCustomerEmail(e.target.value)}
-            className="input input-bordered w-full"
-          />
+            <input
+              type="email"
+              placeholder="Your email"
+              value={customer_email}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              className="input input-bordered w-full"
+            />
 
-          <input
-            type="datetime-local"
-            value={appointment_time}
-            onChange={(e) => setAppointmentTime(e.target.value)}
-            className="input input-bordered w-full"
-          />
+            <input
+              type="datetime-local"
+              value={appointment_time}
+              onChange={(e) => setAppointmentTime(e.target.value)}
+              className="input input-bordered w-full"
+            />
 
-          <button type="submit" className="btn btn-primary w-full">
-            Book appointment
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary w-full">
+              Book appointment
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
